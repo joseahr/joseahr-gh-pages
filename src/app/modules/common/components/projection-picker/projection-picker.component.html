@@ -1,0 +1,18 @@
+<md-accordion [displayMode]="'flat'" [multi]="false">
+  <md-expansion-panel #panel  [hideToggle]="false">
+    <md-expansion-panel-header>{{olMap?.getView().getProjection().getCode()}}</md-expansion-panel-header>
+
+
+    <md-input-container>
+      <input mdInput placeholder="Buscar proyección" [(ngModel)]="projectionToSearch">
+    </md-input-container>
+
+
+    <md-action-row>
+      <button md-button (click)="searchProjection()" [disabled]="!projectionToSearch.length">BUSCAR</button>
+      <button md-button (click)="panel.opened = false">CANCELAR</button>
+    </md-action-row>
+
+  </md-expansion-panel>
+
+</md-accordion>

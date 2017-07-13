@@ -1,0 +1,30 @@
+<button 
+  md-icon-button 
+  *ngIf="user | async; let user; else no_user"
+  [mdMenuTriggerFor]="menuLoggedIn"
+>
+  <div 
+    [style.background-image]="'url(' + user.photoURL + ')'"
+    style="width : 40px; height : 40px; background-size : cover !important; border-radius : 40px;"></div>
+</button>
+
+<ng-template #no_user>
+  <button md-icon-button [mdMenuTriggerFor]="menuLoggedOut">
+    <md-icon>more_vert</md-icon>
+  </button>
+</ng-template>
+
+<md-menu #menuLoggedIn="mdMenu" [overlapTrigger]="false">
+  <button md-menu-item (click)="logout()">
+    <md-icon>exit_to_app</md-icon>
+    <span>Logout</span>
+  </button>
+</md-menu>
+
+<md-menu #menuLoggedOut="mdMenu" [overlapTrigger]="false">
+  <button md-menu-item (click)="login()">
+    <md-icon>person</md-icon>
+    <span>Login</span>
+  </button>
+</md-menu>
+

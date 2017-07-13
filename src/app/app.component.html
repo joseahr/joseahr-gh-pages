@@ -1,0 +1,19 @@
+<md-toolbar color="primary">
+    <button type="button" md-icon-button (click)="toggleSideNav()">
+      <md-icon>menu</md-icon>
+    </button>
+    <div style="flex: 1 1 auto;"></div>
+    <app-auth-firebase></app-auth-firebase>
+</md-toolbar>
+
+<md-sidenav-container class="sidenav-container">
+  <md-sidenav class="sidenav">
+    Coming Soon
+  </md-sidenav>
+
+  <div class="sidenav-content">
+    <router-outlet></router-outlet>
+  </div>
+
+</md-sidenav-container>
+
