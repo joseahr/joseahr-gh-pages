@@ -34,10 +34,10 @@ export class MapComponent implements OnInit {
   observableFeatureList : Observable<any>;
   user : Observable<any>;
   backdropAnimationState : string = 'logged';
-
   onMapClickListener : any;
-
   userMessages : FirebaseListObservable<any>;
+  mapInstance : ol.Map;
+  firebaseLayer : ol.layer.Vector = new ol.layer.Vector({ source : new ol.source.Vector() });
 
   constructor(
       private auth : AngularFireAuth
@@ -47,35 +47,66 @@ export class MapComponent implements OnInit {
     , private renderer : Renderer2
   ) {
     
-    this.user = this.auth.authState;
+    this.user = this.auth.authState
+      .do( user =>{
+        if(user){
+          this.backdropAnimationState = 'logged';
+          this.enableDraw();
+          this.userMessages = this.db.list('/messages/' + user.uid);
+        } else {
+          this.backdropAnimationState = 'notLogged';
+          this.disableDraw();
+        }
+      });
 
-    this.observableFeatureList = 
-      this.db.list('/messages')
-        .do( list => {
-          console.log(list);
-        });
+    this.observableFeatureList = this.db.list('/messages')
+      .map( (list : any[])=> {
 
-    this.observableFeatureList
-      .subscribe(
-        (list)=>console.log('lll', list),
-        (err) => console.log(err)
-      );
+        //let firebaseLSource = this.fireBaseLayer.getSource();
+
+        return list
+        .reduce( (l : Array<any>, userMessages : any) => {
+
+          let messages;
+          let userId = userMessages['$key'];
+          //console.log(userId, 'userIdd')
+
+          //console.log(Object.keys(userMessages))
+
+          let userMessagesList = Object.keys(userMessages).map( (messageId) => {
+            let { geohash } = userMessages[messageId];
+            
+            //let feature = firebaseLSource.getFeatureById(messageId);
+
+            let { lon, lat }= GeoHash.decode(geohash);
+
+            let coordinate = ol.proj.transform(  [lon, lat]
+                                               , 'EPSG:4326'
+                                               , this.mapInstance.getView().getProjection()  );
+            return ({ userId, coordinate, messageId });
+
+          });
+
+          return l.concat(userMessagesList);
+
+        }, []);
+        //console.log(list);
+        //this.fireBaseLayer.getSource().getFeatureById()
+      });
+
+    this.observableFeatureList.subscribe(
+      (list)=>console.log('orderedlist', list)
+    )
   }
 
-  mapInstance : ol.Map;
-  fireBaseLayer : ol.layer.Vector = new ol.layer.Vector({ source : new ol.source.Vector() });
-
   ngOnInit() {
-    this.renderer.setStyle(this.mapContainer.nativeElement, 'position', 'absolute');
-    this.renderer.setStyle(this.mapContainer.nativeElement, 'top'   , '0px');
-    this.renderer.setStyle(this.mapContainer.nativeElement, 'left'  , '0px');
-    this.renderer.setStyle(this.mapContainer.nativeElement, 'right' , '0px');
-    this.renderer.setStyle(this.mapContainer.nativeElement, 'bottom', '0px');
+    this.renderer.setStyle(this.mapContainer.nativeElement, 'width', '100%');
+    this.renderer.setStyle(this.mapContainer.nativeElement, 'height'   , '100%');
 
     this.mapInstance = new ol.Map({
       layers : [
         new ol.layer.Tile({ source : new ol.source.OSM({ reprojectionErrorThreshold : 10 }) }),
-        this.fireBaseLayer
+        this.firebaseLayer
       ],
       target : this.mapContainer.nativeElement,
       view : new ol.View({
@@ -86,17 +117,8 @@ export class MapComponent implements OnInit {
     })
 
     //this.renderer.setStyle(this.mapContainer.nativeElement, 'background', '#f7f7f7');
-    this.user
-      .do( user =>{
-        if(user){
-          this.backdropAnimationState = 'logged';
-          this.enableDraw();
-          this.userMessages = this.db.list('/messages/' + user.uid);
-        } else {
-          this.backdropAnimationState = 'notLogged';
-          this.disableDraw();
-        }
-      }).subscribe()
+    this.user.subscribe()
+    this.observableFeatureList.subscribe();
   }
 
   getInstance(){

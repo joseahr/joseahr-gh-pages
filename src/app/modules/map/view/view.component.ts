@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, Renderer2 } from '@angular/core';
 
 @Component({
   selector: 'app-view',
@@ -7,7 +7,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ViewComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private renderer : Renderer2,
+    private elementRef : ElementRef
+  ) {
+    this.renderer.setStyle(this.elementRef.nativeElement, 'width', '100%');
+    this.renderer.setStyle(this.elementRef.nativeElement, 'height', '100%');
+  }
 
   ngOnInit() {
   }

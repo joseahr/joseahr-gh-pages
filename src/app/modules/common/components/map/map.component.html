@@ -1,3 +1,10 @@
+<app-vector-layer-feature
+    *ngFor = "let feature of observableFeatureList | async"
+    [id] = feature.messageId
+    [layer] = "firebaseLayer"
+    [coordinate]= feature.coordinate
+>
+</app-vector-layer-feature>
 <div 
     style="display:flex;flex-direction: column; pointer-events:none; position : absolute; top:0px;bottom:0px;right:0px;left:0px;background:rgba(0,0,0,0.3);z-index:11111; text-align:center;"
     [@notLoggedBackdropAnimation]="backdropAnimationState"
