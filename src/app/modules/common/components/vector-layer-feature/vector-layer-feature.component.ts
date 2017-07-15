@@ -12,6 +12,7 @@ export class VectorLayerFeatureComponent implements OnInit {
   @Input() id: string|number|undefined;
   @Input() layer : layer.Vector;
   @Input() coordinate : Coordinate;
+  @Input() properties : any;
 
   constructor() {
   }
@@ -20,6 +21,10 @@ export class VectorLayerFeatureComponent implements OnInit {
     this.instance = new Feature();
     if (this.id !== undefined) {
       this.instance.setId(this.id);
+    }
+
+    if(this.properties){
+      this.instance.setProperties(this.properties);
     }
 
     this.instance.setGeometry(
@@ -37,12 +42,14 @@ export class VectorLayerFeatureComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log(changes)
+    //console.log(changes)
     if (this.instance) {
       this.instance.setId(this.id);
       this.instance.setGeometry(
         new geom.Point(this.coordinate)
       );
+
+      this.instance.setProperties(this.properties)
     }
 
   }

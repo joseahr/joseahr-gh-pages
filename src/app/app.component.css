@@ -29,3 +29,18 @@
     top:56px
   }
 }
+
+.navigation-link {
+  cursor: pointer;
+  background : #fff;
+  color : rgb(63, 81, 181);
+}
+
+.active-link {
+  background : rgb(63, 81, 181);
+  color : #fff;
+}
+
+.mat-sidenav {
+  padding: 0px;
+}

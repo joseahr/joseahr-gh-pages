@@ -1,4 +1,4 @@
-<md-toolbar color="primary">
+<md-toolbar color="primary" style="position : relative; z-index : 1; box-shadow: 0px 0px 12px 2px #000;">
     <button type="button" md-icon-button (click)="toggleSideNav()">
       <md-icon>menu</md-icon>
     </button>
@@ -7,8 +7,60 @@
 </md-toolbar>
 
 <md-sidenav-container class="sidenav-container">
-  <md-sidenav class="sidenav" [mode]="'push'"> 
-    Coming Soon
+
+  <md-sidenav class="sidenav" mode="push"> 
+    
+    <md-toolbar color="primary"></md-toolbar>
+    <md-toolbar color="primary">Menu</md-toolbar>
+
+    <md-list style="padding-top : 0px;">
+      <md-divider></md-divider>
+      <md-list-item 
+        class="navigation-link"
+        [routerLink]="['']" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <md-icon md-list-icon>home</md-icon>
+        <h4 md-line>Home</h4>
+      </md-list-item>
+      <md-list-item 
+        class="navigation-link"
+        [routerLink]="['map']" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <md-icon md-list-icon>map</md-icon>
+        <h4 md-line>Mapa</h4>
+      </md-list-item>
+      <md-divider></md-divider>
+      <md-list-item
+        class="navigation-link"
+        [routerLink]="['portfolio']" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <md-icon md-list-icon>assignment_ind</md-icon>
+        <h4 md-line>Portfolio</h4>
+      </md-list-item>
+      <md-list-item
+        class="navigation-link"
+        [routerLink]="['blog']" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <md-icon md-list-icon>event_note</md-icon>
+        <h4 md-line>Blog</h4>
+      </md-list-item>
+    </md-list>
+    <br>
+    <p>aaaaaaaaaa</p>
+    <br>
+    <p>aaaaaaaaaa</p>
+    <br>
+    <p>aaaaaaaaaa</p>
+    <br>
+    <p>aaaaaaaaaa</p>
+    <br>
+    <p>aaaaaaaaaa</p>
+    <br>
+    <p>aaaaaaaaaa</p>
+    <br>
+    <p>aaaaaaaaaa</p>
+    <br>
+    <p>aaaaaaaaaa</p>
   </md-sidenav>
 
   <div class="sidenav-content">

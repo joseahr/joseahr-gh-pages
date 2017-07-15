@@ -17,6 +17,7 @@ import {
   , DrawMapFirebaseComponent
   , MapFirebaseDialogComponent
   , VectorLayerFeatureComponent
+  , FeatureInfoDialogComponent
 } from './components';
 
 
@@ -36,8 +37,8 @@ const COMMON_COMPONENTS = [
     AngularFireDatabaseModule,
     AngularFireAuthModule
   ],
-  declarations: [...COMMON_COMPONENTS, VectorLayerFeatureComponent, MapFirebaseDialogComponent],
+  declarations: [...COMMON_COMPONENTS, VectorLayerFeatureComponent, MapFirebaseDialogComponent, FeatureInfoDialogComponent],
   exports : COMMON_COMPONENTS,
-  entryComponents : [MapFirebaseDialogComponent]
+  entryComponents : [MapFirebaseDialogComponent, FeatureInfoDialogComponent]
 })
 export class MyCommonModule { }

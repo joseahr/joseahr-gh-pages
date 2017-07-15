@@ -1,15 +1,16 @@
 import { Component, OnInit, ViewChild, ElementRef, Renderer2 } from '@angular/core';
 import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/database';
 import { AngularFireAuth } from 'angularfire2/auth';
+import * as firebase from 'firebase';
 import { Observable } from 'rxjs';
 import * as ol from 'openlayers';
+
+import { MdDialog, MdDialogRef } from '@angular/material';
+import { FeatureInfoDialogComponent } from '..';
 
 import * as GeoHash from 'latlon-geohash';
 
 import { trigger, state, style, transition, animate } from '@angular/animations';
-
-import { MdDialog, MdDialogRef } from '@angular/material';
-import { MapFirebaseDialogComponent } from '..';
 
 @Component({
   selector: 'app-map',
@@ -21,8 +22,7 @@ import { MapFirebaseDialogComponent } from '..';
         transform : 'translateY(0px) scale(1)'
       })),
       state('logged', style({
-        transform : 'translateY(-1000px) scale(0.6)',
-        visibility : 'hidden'
+        transform : 'translateY(-1000px) scale(0.6)'
       })),
       transition('logged => notLogged', animate('300ms ease-in')),
       transition('notLogged => logged', animate('300ms ease-in'))
@@ -32,32 +32,42 @@ import { MapFirebaseDialogComponent } from '..';
 export class MapComponent implements OnInit {
 
   observableFeatureList : Observable<any>;
+  usersReference : Array<any>;
   user : Observable<any>;
   backdropAnimationState : string = 'logged';
-  onMapClickListener : any;
   userMessages : FirebaseListObservable<any>;
   mapInstance : ol.Map;
   firebaseLayer : ol.layer.Vector = new ol.layer.Vector({ source : new ol.source.Vector() });
+  selectInteraction : ol.interaction.Select = new ol.interaction.Select(<any>{
+      layers : [this.firebaseLayer],
+      hitTolerance : 5
+  });
 
   constructor(
       private auth : AngularFireAuth
     , private db : AngularFireDatabase
-    , private mapFirebaseDialog : MdDialog
     , private mapContainer : ElementRef
     , private renderer : Renderer2
+    , private dialog : MdDialog
   ) {
     
     this.user = this.auth.authState
       .do( user =>{
         if(user){
           this.backdropAnimationState = 'logged';
-          this.enableDraw();
-          this.userMessages = this.db.list('/messages/' + user.uid);
         } else {
           this.backdropAnimationState = 'notLogged';
-          this.disableDraw();
         }
       });
+
+    //this.db.database.ref('/messages').limitToLast(50).on('value', (value)=>console.log('value', value))
+
+    this.db.list('/users').subscribe(
+      (users)=>{
+        this.usersReference = users;
+        console.log(users);
+      }
+    );
 
     this.observableFeatureList = this.db.list('/messages')
       .map( (list : any[])=> {
@@ -93,15 +103,15 @@ export class MapComponent implements OnInit {
         //console.log(list);
         //this.fireBaseLayer.getSource().getFeatureById()
       });
-
-    this.observableFeatureList.subscribe(
-      (list)=>console.log('orderedlist', list)
-    )
   }
 
   ngOnInit() {
-    this.renderer.setStyle(this.mapContainer.nativeElement, 'width', '100%');
-    this.renderer.setStyle(this.mapContainer.nativeElement, 'height'   , '100%');
+    this.renderer.setStyle(this.mapContainer.nativeElement, 'position', 'absolute');
+    this.renderer.setStyle(this.mapContainer.nativeElement, 'width'   , '100%');
+    this.renderer.setStyle(this.mapContainer.nativeElement, 'top'   , '0px');
+    this.renderer.setStyle(this.mapContainer.nativeElement, 'bottom'   , '0px');
+    this.renderer.setStyle(this.mapContainer.nativeElement, 'left'   , '0px');
+
 
     this.mapInstance = new ol.Map({
       layers : [
@@ -113,8 +123,12 @@ export class MapComponent implements OnInit {
         center: [0, 0],
         zoom: 2
       }),
-      controls : ol.control.defaults().extend([new ol.control.MousePosition()])
-    })
+      controls : ol.control.defaults()
+    });
+
+    this.mapInstance.addInteraction(this.selectInteraction);
+
+    this.selectInteraction.on('select', this.onSelectFeature.bind(this))
 
     //this.renderer.setStyle(this.mapContainer.nativeElement, 'background', '#f7f7f7');
     this.user.subscribe()
@@ -125,41 +139,28 @@ export class MapComponent implements OnInit {
     return this.mapInstance;
   }
 
-  enableDraw(){
-    if(this.onMapClickListener){
-      ol.Observable.unByKey(this.onMapClickListener);
-    }
+  onSelectFeature(event){
+    console.log(event)
+    let { selected } = event;
+    if(selected.length){
+      let feature : ol.Feature = selected[0];
 
-    this.onMapClickListener = this.mapInstance.on('dblclick', this.onMapClick.bind(this))
+      console.log(feature.getProperties())
+
+      let dialogRef = this.dialog.open(FeatureInfoDialogComponent);
+        dialogRef.componentInstance.properties = feature.getProperties()
+        
+    }
   }
 
-  disableDraw(){
-    if(this.onMapClickListener){
-      ol.Observable.unByKey(this.onMapClickListener);
-    }
+  getProperties(feature){
+    //console.log('[getProperties]', feature);
+    let { userId } = feature;
 
-    this.onMapClickListener = null;
-  }
+    let userInfo = this.usersReference.find( u => u.$key == userId );
 
-
-  onMapClick(event : ol.MapBrowserEvent){
-    console.log(event.coordinate);
-
-    // Nos aseguramos que las coordenadas estén en EPSG:4326
-    let coordinate = ol.proj.transform(event.coordinate
-                                      , this.mapInstance.getView().getProjection()
-                                      , 'EPSG:4326');
-
-    let geohash = GeoHash.encode(...coordinate.reverse(), 11);
-                            
-    console.log(geohash, GeoHash.decode(geohash));
-
-    let dialog = this.mapFirebaseDialog.open(MapFirebaseDialogComponent);
-        dialog.componentInstance.geohash = geohash;
-    
-    dialog.afterClosed().subscribe(
-      ()=> this.userMessages.push({ geohash })
-    )
+    //console.log(userInfo)
+    return userInfo;
   }
 
 }

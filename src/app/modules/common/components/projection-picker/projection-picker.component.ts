@@ -18,7 +18,10 @@ export class ProjectionPickerComponent implements OnInit {
 
   @Input('map') olMap : ol.Map;
 
-  projectionToSearch = '';
+  projectionToSearch : string = '';
+
+  pointerMoveCoords : ol.Coordinate;
+  projection : ol.proj.Projection = ol.proj.get('EPSG:3857');
 
   constructor(
     private projService : ProjectionService
@@ -28,6 +31,16 @@ export class ProjectionPickerComponent implements OnInit {
   }
 
   ngAfterViewInit(){
+    this.olMap.on('pointermove', (e : ol.MapBrowserEvent)=>{
+      this.pointerMoveCoords = ol.proj.transform( e.coordinate
+                                                , this.olMap.getView().getProjection()
+                                                , this.projection );
+    });
+
+    this
+      .olMap
+      .getTargetElement()
+      .addEventListener('mouseleave', ()=> this.pointerMoveCoords = null );
   }
 
   searchProjection(){
@@ -51,9 +64,15 @@ export class ProjectionPickerComponent implements OnInit {
     var extent = ol.extent.applyTransform([-180, -90, 180, 90], fromLonLat);
     projection.setExtent(extent);
 
+    console.log(projection.getUnits())
+
     console.log(projection)
 
-    let zoom = this.olMap.getView().getZoom();
+    this.projection = projection;
+
+    this.projectionToSearch = '';
+
+    /*let zoom = this.olMap.getView().getZoom();
     let center = ol.proj.transform(
         this.olMap.getView().getCenter()
       , this.olMap.getView().getProjection()
@@ -62,7 +81,7 @@ export class ProjectionPickerComponent implements OnInit {
     console.log(center)
 
     let view = new ol.View({ projection, zoom, center });
-    this.olMap.setView(view);
+    this.olMap.setView(view);*/
   }
 
 }
