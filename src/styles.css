@@ -7,3 +7,18 @@ html, body {
     overflow: hidden;
     font-family: Roboto !important;
 }
+
+app-map, app-home {
+  padding-top : 64px;
+  position : absolute;
+  width    : 100%;
+  top      : 0px;
+  bottom   : 0px;
+  left     : 0px;
+}
+
+@media screen and (max-width: 600px){
+    app-map, app-home {
+    padding-top :56px
+    }
+}

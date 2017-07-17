@@ -24,6 +24,7 @@ export class VectorLayerFeatureComponent implements OnInit {
     }
 
     if(this.properties){
+      //console.log(this.properties, 'props')
       this.instance.setProperties(this.properties);
     }
 

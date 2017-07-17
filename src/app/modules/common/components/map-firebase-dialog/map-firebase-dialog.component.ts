@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import * as ol from 'openlayers';
 
 @Component({
   selector: 'app-map-firebase-dialog',
@@ -8,7 +7,7 @@ import * as ol from 'openlayers';
 })
 export class MapFirebaseDialogComponent implements OnInit {
 
-  geohash : string;
+  message : string = '';
 
   constructor() { }
 

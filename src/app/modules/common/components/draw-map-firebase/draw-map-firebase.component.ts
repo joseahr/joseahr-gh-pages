@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer2, ElementRef, Input } from '@angular/core';
+import { Component, OnInit, Renderer2, ElementRef, Input, Output } from '@angular/core';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { MdSnackBar, MdDialog, MdDialogRef } from '@angular/material';
 import { MapFirebaseDialogComponent } from '..';
@@ -6,6 +6,8 @@ import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/databa
 import * as ol from 'openlayers';
 import { AngularFireAuth } from 'angularfire2/auth';
 import * as GeoHash from 'latlon-geohash';
+import 'rxjs/add/operator/toPromise';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-draw-map-firebase',
@@ -14,13 +16,15 @@ import * as GeoHash from 'latlon-geohash';
   animations : [
     trigger('buttonEnableDrawAnimation', [
       state('visible', style({
-        transform : 'translateY(20px) translateX(50vw) scale(1)'
+        transform : 'translateY(20px) scale(1)',
+        opacity : '1'
       })),
       state('notVisible', style({
-        transform : 'translateY(-1000px) translateX(50vw) scale(0.6)'
+        transform : 'translateY(0px) translateX(-100px) scale(0.6)',
+        opacity : '0'
       })),
-      transition('visible => notVisible', animate('300ms ease-in')),
-      transition('notVisible => visible', animate('300ms ease-in'))
+      transition('visible => notVisible', animate('300ms ease')),
+      transition('notVisible => visible', animate('300ms ease'))
     ])
   ]
 })
@@ -28,6 +32,10 @@ export class DrawMapFirebaseComponent implements OnInit {
 
   buttonAuthState : string = 'notVisible';
   @Input('map') mapInstance : ol.Map;
+  @Input('onDrawStart') onDrawStart : Subject<any>;
+  @Input('onDrawEnd') onDrawEnd : Subject<any>
+
+
   mapClickListener : any;
   userMessages : FirebaseListObservable<any>;
 
@@ -42,6 +50,10 @@ export class DrawMapFirebaseComponent implements OnInit {
 
     this.renderer.setStyle(this.element.nativeElement, 'position', 'absolute');
     this.renderer.setStyle(this.element.nativeElement, 'z-index', '1');
+    this.renderer.setStyle(this.element.nativeElement, 'left', '0px');
+    this.renderer.setStyle(this.element.nativeElement, 'right', '0px');
+    this.renderer.setStyle(this.element.nativeElement, 'display', 'flex');
+    this.renderer.setStyle(this.element.nativeElement, 'height', '0px');
 
     this.auth.authState.subscribe(
       (user)=>{
@@ -71,30 +83,51 @@ export class DrawMapFirebaseComponent implements OnInit {
   onButtonClick(event){
 
     this.buttonAuthState = 'notVisible';
-    this.snackbar.open(`Selecciona un punto en el mapa`, 'CANCELAR', {
-      
-    });
+    this.onDrawStart.next();
+    this.snackbar.open(`Selecciona un punto en el mapa`, 'CANCELAR');
+
     this.snackbar._openedSnackBarRef.onAction().subscribe(
       ()=>{
-        console.log('onAction')
+        //console.log('onAction');
+        this.onDrawEnd.next();
         ol.Observable.unByKey(this.mapClickListener);
         this.mapClickListener = null;
         this.buttonAuthState = 'visible';
       }
     )  
 
-    this.mapClickListener = this.mapInstance.once('click', (e : ol.MapBrowserEvent)=> {
+    this.mapClickListener = this.mapInstance.on('click', (e : ol.MapBrowserEvent)=> {
 
       let geohash = this.getGeoHash(e.coordinate);
 
       let dialogRef = this.dialog.open(MapFirebaseDialogComponent);
 
       dialogRef.afterClosed().subscribe(
-        ()=>{
-          console.log('DialogExit');
-          this.buttonAuthState = 'visible';
+        (message)=>{
+          if(!message) {
+            return;
+          };
+
+          let timestamp = new Date().getTime();
+
+          //console.log('DialogExit');
+
+          this.onDrawEnd.next();
+          ol.Observable.unByKey(this.mapClickListener);
+          this.mapClickListener = null;
+
           ( this.snackbar._openedSnackBarRef && this.snackbar._openedSnackBarRef.dismiss() );
-          this.userMessages.push({ geohash });
+
+          this
+          .userMessages
+          .push({ geohash, message, timestamp })
+          .then( ()=>{
+            return this
+            .snackbar
+            .open('Guardado correctamente', 'CERRAR', { duration : 1000 })
+            .afterDismissed()
+            .toPromise();
+          }).then( ()=> this.buttonAuthState = 'visible' );
         }
       );
 

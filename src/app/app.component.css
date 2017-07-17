@@ -1,34 +1,3 @@
-.sidenav-container {
-  position : absolute;
-  top : 64px;
-  bottom : 0px;
-  left : 0px;
-  right : 0px;
-}
-
-
-.sidenav-content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height : 100%;
-  width : 100%;
-}
-
-.sidenav {
-  padding: 20px;
-  min-width: 30vw;
-}
-
-@media screen and (max-width: 600px){
-  .sidenav {
-    min-width: 70vw;
-  }
-
-  .sidenav-container {
-    top:56px
-  }
-}
 
 .navigation-link {
   cursor: pointer;

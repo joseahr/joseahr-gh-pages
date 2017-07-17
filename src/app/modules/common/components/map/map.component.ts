@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, Renderer2 } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/database';
 import { AngularFireAuth } from 'angularfire2/auth';
 import * as firebase from 'firebase';
@@ -11,6 +11,8 @@ import { FeatureInfoDialogComponent } from '..';
 import * as GeoHash from 'latlon-geohash';
 
 import { trigger, state, style, transition, animate } from '@angular/animations';
+
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-map',
@@ -43,20 +45,33 @@ export class MapComponent implements OnInit {
       hitTolerance : 5
   });
 
+  actualUser : firebase.User;c
+
+  onDrawStart : Subject<any> = new Subject();
+  onDrawEnd : Subject<any> = new Subject();
+  onDeleteFeature : Subject<any> = new Subject();
+
   constructor(
       private auth : AngularFireAuth
     , private db : AngularFireDatabase
     , private mapContainer : ElementRef
-    , private renderer : Renderer2
     , private dialog : MdDialog
   ) {
+
+    this.onDrawStart.subscribe( () => this.disableSelectFeatures() );
+    this.onDrawEnd.subscribe( () => this.enableSelectFeatures() );
+    this.onDeleteFeature.subscribe( ()=> this.selectInteraction.getFeatures().clear() );
     
     this.user = this.auth.authState
       .do( user =>{
         if(user){
           this.backdropAnimationState = 'logged';
+          this.actualUser = user;
+          this.enableSelectFeatures();
         } else {
           this.backdropAnimationState = 'notLogged';
+          this.actualUser = null;
+          this.disableSelectFeatures();
         }
       });
 
@@ -65,7 +80,7 @@ export class MapComponent implements OnInit {
     this.db.list('/users').subscribe(
       (users)=>{
         this.usersReference = users;
-        console.log(users);
+        //console.log(users);
       }
     );
 
@@ -84,7 +99,7 @@ export class MapComponent implements OnInit {
           //console.log(Object.keys(userMessages))
 
           let userMessagesList = Object.keys(userMessages).map( (messageId) => {
-            let { geohash } = userMessages[messageId];
+            let { geohash, message, timestamp } = userMessages[messageId];
             
             //let feature = firebaseLSource.getFeatureById(messageId);
 
@@ -93,7 +108,7 @@ export class MapComponent implements OnInit {
             let coordinate = ol.proj.transform(  [lon, lat]
                                                , 'EPSG:4326'
                                                , this.mapInstance.getView().getProjection()  );
-            return ({ userId, coordinate, messageId });
+            return ({ userId, coordinate, messageId, message, timestamp });
 
           });
 
@@ -106,12 +121,6 @@ export class MapComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.renderer.setStyle(this.mapContainer.nativeElement, 'position', 'absolute');
-    this.renderer.setStyle(this.mapContainer.nativeElement, 'width'   , '100%');
-    this.renderer.setStyle(this.mapContainer.nativeElement, 'top'   , '0px');
-    this.renderer.setStyle(this.mapContainer.nativeElement, 'bottom'   , '0px');
-    this.renderer.setStyle(this.mapContainer.nativeElement, 'left'   , '0px');
-
 
     this.mapInstance = new ol.Map({
       layers : [
@@ -139,28 +148,54 @@ export class MapComponent implements OnInit {
     return this.mapInstance;
   }
 
+  hasSelectInteraction(){
+    let selectInteraction = this.mapInstance
+                              .getInteractions()
+                              .getArray()
+                              .find( i => i === this.selectInteraction );
+    return selectInteraction != undefined;
+  }
+
+  enableSelectFeatures(){
+    
+    if(this.hasSelectInteraction()) return;
+
+    this.mapInstance.addInteraction(this.selectInteraction);
+  }
+
+  disableSelectFeatures(){
+    if(this.hasSelectInteraction){
+      this.mapInstance.removeInteraction(this.selectInteraction);
+    }
+  }
+
   onSelectFeature(event){
-    console.log(event)
+    //console.log(event)
     let { selected } = event;
     if(selected.length){
       let feature : ol.Feature = selected[0];
 
-      console.log(feature.getProperties())
+      //console.log(feature.getProperties())
 
       let dialogRef = this.dialog.open(FeatureInfoDialogComponent);
-        dialogRef.componentInstance.properties = feature.getProperties()
-        
+        dialogRef.componentInstance.userId = this.actualUser.uid;
+        dialogRef.componentInstance.feature = feature;
+        dialogRef.componentInstance.onFeatureDeleted = this.onDeleteFeature;
     }
   }
 
   getProperties(feature){
     //console.log('[getProperties]', feature);
-    let { userId } = feature;
+    let { userId, message, timestamp } = feature;
+    
+    
+    //if(timestamp) console.log(timestamp, 'tm')
+    //console.log(message);
 
     let userInfo = this.usersReference.find( u => u.$key == userId );
 
     //console.log(userInfo)
-    return userInfo;
+    return { userInfo, message, timestamp };
   }
 
 }

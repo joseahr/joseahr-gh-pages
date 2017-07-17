@@ -7,7 +7,11 @@
 >
 </app-vector-layer-feature>
 
-<app-draw-map-firebase [map]="getInstance()"></app-draw-map-firebase>
+<app-draw-map-firebase 
+    [map]="getInstance()"
+    [onDrawStart]="onDrawStart"
+    [onDrawEnd]="onDrawEnd"
+></app-draw-map-firebase>
 
 <div 
     style="overflow:hidden;display:flex;flex-direction: column; pointer-events:none; position : absolute; top:0px;bottom:0px;right:0px;left:0px;background:rgba(0,0,0,0.3);z-index:11111; text-align:center;"

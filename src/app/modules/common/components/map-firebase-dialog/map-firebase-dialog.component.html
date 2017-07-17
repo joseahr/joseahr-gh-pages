@@ -1,3 +1,20 @@
-<p>
-  map-firebase-dialog works!
-</p>
+<h1 md-dialog-title>
+  <md-icon color="primary">comment</md-icon>
+  Escribe tu mensaje
+</h1>
+<div md-dialog-content>
+  <md-input-container>
+    <textarea 
+      mdInput
+      #yourMessage
+      maxlength="50"
+      placeholder="Tu mensaje aquí" 
+      [(ngModel)]="message"
+      value="" ></textarea>
+    <md-hint align="end">{{yourMessage.value.length}} / 50</md-hint>
+  </md-input-container>
+</div>
+<div md-dialog-actions>
+  <button md-button md-dialog-close="">CANCELAR</button>
+  <button md-button md-dialog-close="{{message}}">ENVIAR</button>
+</div>
