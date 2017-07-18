@@ -36,7 +36,7 @@ const COMMON_COMPONENTS = [
     FormsModule,
     AngularFireModule,
     AngularFireDatabaseModule,
-    AngularFireAuthModule
+    AngularFireAuthModule,
   ],
   declarations: [...COMMON_COMPONENTS, VectorLayerFeatureComponent, MapFirebaseDialogComponent, FeatureInfoDialogComponent],
   exports : COMMON_COMPONENTS,

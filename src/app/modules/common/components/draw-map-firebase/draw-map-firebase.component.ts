@@ -37,7 +37,6 @@ export class DrawMapFirebaseComponent implements OnInit {
 
 
   mapClickListener : any;
-  pointerMoveListener : any;
   userMessages : FirebaseListObservable<any>;
 
   constructor(
@@ -61,13 +60,11 @@ export class DrawMapFirebaseComponent implements OnInit {
         
         if(user){
           this.userMessages = this.db.list('/messages/' + user.uid);
-          this.enablePointerMove();
         } else {
           (this.snackbar._openedSnackBarRef && this.snackbar._openedSnackBarRef.dismiss())
           ol.Observable.unByKey(this.mapClickListener);
           this.mapClickListener = null;
           this.buttonAuthState = 'notVisible';
-          this.disablePointerMove();
         }
 
         this.toggleButton(user);
@@ -77,24 +74,6 @@ export class DrawMapFirebaseComponent implements OnInit {
   }
 
   ngOnInit() {
-  }
-
-  enablePointerMove(){
-    if(this.pointerMoveListener){
-      return;
-    }
-    this.pointerMoveListener = this.mapInstance.on('pointermove', (e : ol.MapBrowserPointerEvent)=>{
-      if(this.mapInstance.hasFeatureAtPixel(e.pixel)){
-        document.body.style.cursor = 'pointer';
-      } else {
-        document.body.style.cursor = 'default';
-      }
-    })
-  }
-
-  disablePointerMove(){
-    ol.Observable.unByKey(this.pointerMoveListener);
-    this.pointerMoveListener = null;
   }
 
   toggleButton(authState){

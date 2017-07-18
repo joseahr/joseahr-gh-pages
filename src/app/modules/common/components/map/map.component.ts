@@ -40,13 +40,12 @@ export class MapComponent implements OnInit {
   userMessages : FirebaseListObservable<any>;
   mapInstance : ol.Map;
   firebaseLayer : ol.layer.Vector = new ol.layer.Vector({ source : new ol.source.Vector() });
+  pointerMoveListener : any;
   selectInteraction : ol.interaction.Select = new ol.interaction.Select(<any>{
       layers : [this.firebaseLayer],
       hitTolerance : 5
   });
-
   actualUser : firebase.User;c
-
   onDrawStart : Subject<any> = new Subject();
   onDrawEnd : Subject<any> = new Subject();
   onDeleteFeature : Subject<any> = new Subject();
@@ -69,10 +68,12 @@ export class MapComponent implements OnInit {
         if(user){
           this.backdropAnimationState = 'logged';
           this.actualUser = user;
+          this.enablePointerMove();
           this.enableSelectFeatures();
         } else {
           this.backdropAnimationState = 'notLogged';
           this.actualUser = null;
+          this.disablePointerMove();
           this.disableSelectFeatures();
         }
       });
@@ -148,6 +149,24 @@ export class MapComponent implements OnInit {
 
   getInstance(){
     return this.mapInstance;
+  }
+
+  enablePointerMove(){
+    if(this.pointerMoveListener){
+      return;
+    }
+    this.pointerMoveListener = this.mapInstance.on('pointermove', (e : ol.MapBrowserPointerEvent)=>{
+      if(this.mapInstance.hasFeatureAtPixel(e.pixel)){
+        document.body.style.cursor = 'pointer';
+      } else {
+        document.body.style.cursor = 'default';
+      }
+    })
+  }
+
+  disablePointerMove(){
+    ol.Observable.unByKey(this.pointerMoveListener);
+    this.pointerMoveListener = null;
   }
 
   hasSelectInteraction(){

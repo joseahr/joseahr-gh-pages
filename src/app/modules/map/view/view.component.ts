@@ -12,7 +12,10 @@ export class ViewComponent implements OnInit {
     private elementRef : ElementRef
   ) {
     this.renderer.setStyle(this.elementRef.nativeElement, 'width', '100%');
-    this.renderer.setStyle(this.elementRef.nativeElement, 'height', '100%');
+    this.renderer.setStyle(this.elementRef.nativeElement, 'position', 'absolute');
+    this.renderer.setStyle(this.elementRef.nativeElement, 'top', '0');
+    this.renderer.setStyle(this.elementRef.nativeElement, 'bottom', '0');
+    this.renderer.setStyle(this.elementRef.nativeElement, 'left', '0');
   }
 
   ngOnInit() {

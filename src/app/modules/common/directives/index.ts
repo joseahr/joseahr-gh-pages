@@ -1,4 +1,4 @@
-import { Directive, ElementRef } from '@angular/core';
+import { Directive, ElementRef, Input } from '@angular/core';
 import { Observable } from 'rxjs';
 
 @Directive({
@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 })
 export class AsyncWritterDirective {
     text : string;
+    infinite : boolean = false;
 
     constructor(
         private element : ElementRef

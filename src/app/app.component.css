@@ -13,3 +13,17 @@
 .mat-sidenav {
   padding: 0px;
 }
+
+.sidenav-container {
+  top : 64px !important;
+}
+
+.sidenav-content {
+  width : 100%;
+}
+
+@media screen and (max-width : 600px) {
+  .sidenav-container {
+    top : 56px !important;
+  }
+}
