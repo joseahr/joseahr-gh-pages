@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Renderer2 } from '@angular/core';
 import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/database';
 import { AngularFireAuth } from 'angularfire2/auth';
 import * as firebase from 'firebase';
@@ -45,7 +45,7 @@ export class MapComponent implements OnInit {
       layers : [this.firebaseLayer],
       hitTolerance : 5
   });
-  actualUser : firebase.User;c
+  actualUser : firebase.User;
   onDrawStart : Subject<any> = new Subject();
   onDrawEnd : Subject<any> = new Subject();
   onDeleteFeature : Subject<any> = new Subject();
@@ -55,8 +55,15 @@ export class MapComponent implements OnInit {
       private auth : AngularFireAuth
     , private db : AngularFireDatabase
     , private mapContainer : ElementRef
+    , private renderer : Renderer2
     , private dialog : MdDialog
   ) {
+
+    this.renderer.setStyle(this.mapContainer.nativeElement, 'width', '100%');
+    this.renderer.setStyle(this.mapContainer.nativeElement, 'position', 'absolute');
+    this.renderer.setStyle(this.mapContainer.nativeElement, 'top', '0');
+    this.renderer.setStyle(this.mapContainer.nativeElement, 'left', '0');
+    this.renderer.setStyle(this.mapContainer.nativeElement, 'bottom', '0');
 
     this.onDrawStart.subscribe( () => this.disableSelectFeatures() );
     this.onDrawEnd.subscribe( () => this.enableSelectFeatures() );
@@ -64,12 +71,12 @@ export class MapComponent implements OnInit {
     this.onFeatureInfoDialogClose.subscribe( ()=> this.selectInteraction.getFeatures().clear() );
     
     this.user = this.auth.authState
-      .do( user =>{
+      .map( user =>{
         if(user){
           this.backdropAnimationState = 'logged';
           this.actualUser = user;
           this.enablePointerMove();
-          this.enableSelectFeatures();
+          this.enableSelectFeatures();  
         } else {
           this.backdropAnimationState = 'notLogged';
           this.actualUser = null;
@@ -127,8 +134,7 @@ export class MapComponent implements OnInit {
 
     this.mapInstance = new ol.Map({
       layers : [
-        new ol.layer.Tile({ source : new ol.source.OSM({ reprojectionErrorThreshold : 10 }) }),
-        this.firebaseLayer
+        new ol.layer.Tile({ source : new ol.source.OSM() })
       ],
       target : this.mapContainer.nativeElement,
       view : new ol.View({
@@ -137,6 +143,11 @@ export class MapComponent implements OnInit {
       }),
       controls : ol.control.defaults()
     });
+
+
+    this.mapInstance.addLayer(this.firebaseLayer);
+
+    //console.log(this.mapInstance.getLayers().getArray())
 
     this.mapInstance.addInteraction(this.selectInteraction);
 
