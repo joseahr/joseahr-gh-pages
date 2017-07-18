@@ -50,6 +50,7 @@ export class MapComponent implements OnInit {
   onDrawStart : Subject<any> = new Subject();
   onDrawEnd : Subject<any> = new Subject();
   onDeleteFeature : Subject<any> = new Subject();
+  onFeatureInfoDialogClose : Subject<any> = new Subject();
 
   constructor(
       private auth : AngularFireAuth
@@ -61,6 +62,7 @@ export class MapComponent implements OnInit {
     this.onDrawStart.subscribe( () => this.disableSelectFeatures() );
     this.onDrawEnd.subscribe( () => this.enableSelectFeatures() );
     this.onDeleteFeature.subscribe( ()=> this.selectInteraction.getFeatures().clear() );
+    this.onFeatureInfoDialogClose.subscribe( ()=> this.selectInteraction.getFeatures().clear() );
     
     this.user = this.auth.authState
       .do( user =>{
@@ -181,6 +183,7 @@ export class MapComponent implements OnInit {
         dialogRef.componentInstance.userId = this.actualUser.uid;
         dialogRef.componentInstance.feature = feature;
         dialogRef.componentInstance.onFeatureDeleted = this.onDeleteFeature;
+        dialogRef.componentInstance.onDialogClose = this.onFeatureInfoDialogClose;
     }
   }
 

@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
-import { MdSnackBar } from '@angular/material';
+import { MdSnackBar, MdDialogRef } from '@angular/material';
 import * as ol from 'openlayers';
 import { Subject } from 'rxjs';
 import * as moment from 'moment';
@@ -15,12 +15,16 @@ export class FeatureInfoDialogComponent implements OnInit {
   userId;
   feature : ol.Feature;
   @Input('onFeatureDeleted') onFeatureDeleted : Subject<any> = new Subject();
+   @Input('onDialogClose') onDialogClose : Subject<any> = new Subject();
 
 
   constructor(
     private db : AngularFireDatabase,
-    private snackbar : MdSnackBar
-  ) { }
+    private snackbar : MdSnackBar,
+    private dialogRef : MdDialogRef<FeatureInfoDialogComponent>
+  ) {
+    this.dialogRef.afterClosed().subscribe( ()=> this.onDialogClose.next() );
+  }
 
   ngOnInit() {
     //console.log('[FEATURE INFO DIALOG] ::: ', this.feature.getProperties(), this.userId)
@@ -41,5 +45,5 @@ export class FeatureInfoDialogComponent implements OnInit {
   getDate(){
     return moment(this.feature.getProperties().timestamp).locale('es').fromNow();
   }
-
+  
 }
