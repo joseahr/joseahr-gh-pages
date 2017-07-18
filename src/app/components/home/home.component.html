@@ -1,12 +1,12 @@
 <md-card style="margin : 20px auto; width : 80%;">
   <md-card-title-group>
       <md-card-title>Jose Ángel Hermosilla Rodrigo</md-card-title>
-      <md-card-subtitle>¡Descubre más acerca de mí!</md-card-subtitle>
-      <img md-card-md-image src="./assets/joseahr.jpg" alt="Jose Hermosilla Rodrigo">
+      <md-card-subtitle async-writter>¡Map your world!</md-card-subtitle>
+      <img md-card-md-image src="./assets/joseahr.jpg" alt="Jose Hermosilla Rodrigo" style="border-radius : 2px;">
   </md-card-title-group>
   <md-card-content>
     <md-list>
-      <h3 md-subheader>Fecha de nacimiento</h3>
+      <h3 md-subheader>Datos personales</h3>
       <md-list-item>
         <md-icon color="primary" md-list-icon>date_range</md-icon>
         <p md-line> {{getBirthdayString()}} </p>
@@ -14,6 +14,10 @@
       <md-list-item>
         <md-icon color="primary" md-list-icon>person</md-icon>
         <p md-line> {{getMyAge()}} </p>
+      </md-list-item>
+      <md-list-item>
+        <md-icon color="primary" md-list-icon>email</md-icon>
+        <p md-line> joherro3@topo.upv.es </p>
       </md-list-item>
       <md-divider></md-divider>
       <h3 md-subheader>Estudios</h3>
@@ -26,15 +30,33 @@
       <md-list-item>
         <md-icon color="primary" md-list-icon>work</md-icon>
         <p md-line>Título  : Graduado en Ingeniería en Geomática y Topografía</p>
-        <p md-line>Centro  : Escuela Técnica Superior de Ingeniería Geodésica, Cartográfica y Topográfica</p>
+        <p md-line>Centro  : Escuela Técnica Superior de Ingeniería Geodésica, Cartográfica y Topográfica (UPV)</p>
         <p md-line>Período : 2011 - 2016</p>
       </md-list-item>
       <md-list-item>
         <md-icon color="primary" md-list-icon>work</md-icon>
         <p md-line>Título  : Máster en Geomática y Geoinformación</p>
-        <p md-line>Centro  : Escuela Técnica Superior de Ingeniería Geodésica, Cartográfica y Topográfica</p>
+        <p md-line>Centro  : Escuela Técnica Superior de Ingeniería Geodésica, Cartográfica y Topográfica (UPV)</p>
         <p md-line>Período : 2016 - Actualidad</p>
       </md-list-item>
     </md-list>
+    <md-divider></md-divider>
+    <div style="width : 100%; text-align : center;">
+      <a md-icon-button color="primary" href="https://github.com/joseahr" target="_blank">
+        <i class="fa fa-github fa-2x"></i>
+      </a>
+      <a md-icon-button color="primary" href="https://stackoverflow.com/users/3866134/jose-hermosilla-rodrigo?tab=profile" target="_blank">
+        <i class="fa fa-stack-overflow fa-2x"></i>
+      </a>
+      <a md-icon-button color="primary" href="https://www.facebook.com/jose.hermosillarodrigo" target="_blank">
+        <i class="fa fa-facebook fa-2x"></i>
+      </a>
+      <a md-icon-button color="primary" href="https://www.instagram.com/josehermosillarodrigo/" target="_blank">
+        <i class="fa fa-instagram fa-2x"></i>
+      </a>
+      <a md-icon-button color="primary" href="https://www.linkedin.com/in/jose-%C3%A1ngel-hermosilla-rodrigo-70a590147/" target="_blank">
+        <i class="fa fa-linkedin fa-2x"></i>
+      </a>
+    </div>
   </md-card-content>
 </md-card>

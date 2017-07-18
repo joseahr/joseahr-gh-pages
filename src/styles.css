@@ -4,21 +4,20 @@ html, body {
     margin: 0px;
     width : 100%;
     height : 100%;
-    overflow: hidden;
+    overflow-x: hidden;
     font-family: Roboto !important;
 }
 
 app-map, app-home {
-  padding-top : 64px;
   position : absolute;
   width    : 100%;
-  top      : 0px;
+  top      : 64px;
   bottom   : 0px;
   left     : 0px;
 }
 
 @media screen and (max-width: 600px){
     app-map, app-home {
-    padding-top :56px
+        top : 56px;
     }
 }

@@ -9,6 +9,7 @@ import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { AngularFireAuthModule } from 'angularfire2/auth';
 
+import { AsyncWritterDirective } from './directives';
 
 import { 
     MapComponent
@@ -20,12 +21,12 @@ import {
   , FeatureInfoDialogComponent
 } from './components';
 
-
 const COMMON_COMPONENTS = [
     MapComponent
   , ProjectionPickerComponent
   , AuthFirebaseComponent
   , DrawMapFirebaseComponent
+  , AsyncWritterDirective
 ]
 
 @NgModule({
