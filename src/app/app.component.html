@@ -8,13 +8,14 @@
 
 <md-sidenav-container fullscreen class="sidenav-container">
 
-  <md-sidenav align="start" mode="push" style="width : 320px;"> 
+  <md-sidenav #sidenav align="start" mode="push" style="width : 320px;"> 
     
     <md-toolbar color="primary"></md-toolbar>
     <md-toolbar color="primary">Menu</md-toolbar>
 
     <md-list style="padding-top : 0px;">
-      <md-list-item 
+      <md-list-item
+        (click)="sidenav.close()"
         class="navigation-link"
         [routerLink]="['']" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }"
       >
@@ -22,6 +23,7 @@
         <h4 md-line>Home</h4>
       </md-list-item>
       <md-list-item 
+        (click)="sidenav.close()"
         class="navigation-link"
         [routerLink]="['map']" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }"
       >
@@ -30,6 +32,7 @@
       </md-list-item>
       <md-divider></md-divider>
       <md-list-item
+        (click)="sidenav.close()"
         class="navigation-link"
         [routerLink]="['portfolio']" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }"
       >
@@ -37,6 +40,7 @@
         <h4 md-line>Portfolio</h4>
       </md-list-item>
       <md-list-item
+        (click)="sidenav.close()"
         class="navigation-link"
         [routerLink]="['blog']" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }"
       >

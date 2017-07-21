@@ -1,1 +1,15 @@
-<markdown path="https://raw.githubusercontent.com/joseahr/pyqgis-awesome-linestring-generalizer/master/README.md"></markdown>
+<md-grid-list cols="4" rowHeight="200px" style="width : 80%; margin : 20px auto;">
+    <md-grid-tile *ngFor="let item of items" [rowspan]="item.rows" [colspan]="colspan">
+        <img [src]="item.img_url" alt="item.id" class="img" style="object-fit : cover;width:100%;height:100%; filter : blur(2px);">
+        <md-grid-tile-footer>
+            <h3 md-line>{{item.title}}</h3>
+            <span md-line>{{item.subtitle}}</span>
+            <button 
+                md-icon-button
+                routerLink="/portfolio/{{item.id}}"
+            >
+                <md-icon md-list-icon>send</md-icon>
+            </button>
+        </md-grid-tile-footer>
+    </md-grid-tile>
+</md-grid-list>

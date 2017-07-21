@@ -12,4 +12,5 @@ exports.storeUserInfo = functions.auth.user().onCreate( event =>{
         .ref(`users/${user.uid}`)
         .set({ displayName, photoURL, email })
 
-})
+});
+

@@ -1,0 +1,74 @@
+[
+    {
+        "id" : "linestring-generalizer",
+        "title" : "PyQGIS",
+        "subtitle" : "LineString Generalizer",
+        "img_url" : "https://raw.githubusercontent.com/hectormg92/pyqgis-awesome-linestring-generalizer/master/img/ui1.png",
+        "rows" : 2,
+        "markdown_url" : "https://raw.githubusercontent.com/hectormg92/pyqgis-awesome-linestring-generalizer/master/README.md"
+    },
+    {
+        "id" : "sig-betera",
+        "title" : "SIG Bétera",
+        "subtitle" : "PostgreSQL/NodeJS/Express/Angular 2",
+        "img_url" : "https://www.google.com/maps/d/thumbnail?mid=1bximDJp4zEmSe6COAdQFaCQHJbY&hl=en_US",
+        "rows" : 1,
+        "markdown_url" : "https://raw.githubusercontent.com/joseahr/sig-betera/master/README.md"
+    },
+    {
+        "id" : "arcpy-symbolizer", 
+        "title" : "ArcPy",
+        "subtitle" : "Map Symbolizer",
+        "img_url" : "https://raw.githubusercontent.com/joseahr/arcpy-awesome-symbolizer/master/images/form_exe.png",
+        "rows" : 1,
+        "markdown_url" : "https://raw.githubusercontent.com/joseahr/arcpy-awesome-symbolizer/master/README.md"
+    },
+    {
+        "id" : "gnss-ins-data", 
+        "title" : "Sensores y navegación",
+        "subtitle" : "GNSS/INS Data Parsing",
+        "img_url" : "https://raw.githubusercontent.com/joseahr/gnss-ins-data/master/images/ligado/graficas/ses1_rec.jpg",
+        "rows" : 2,
+        "markdown_url" : "https://raw.githubusercontent.com/joseahr/gnss-ins-data/master/README.md"
+    },
+    {
+        "id" : "arcpy-hillshade", 
+        "title" : "Arcpy",
+        "subtitle" : "Hillshade Plugin",
+        "rows" : 1,
+        "img_url" : "https://raw.githubusercontent.com/joseahr/arcpy-awesome-hillshade/master/images/gui.png",
+        "markdown_url" : "https://raw.githubusercontent.com/joseahr/arcpy-awesome-hillshade/master/README.md"
+    },
+    {
+        "id" : "electron-rinex", 
+        "title" : "Electron App",
+        "subtitle" : "Rinex Parser",
+        "img_url" : "https://avatars1.githubusercontent.com/u/13409222?v=4&s=600",
+        "rows" : 2,
+        "markdown_url" : "https://raw.githubusercontent.com/joseahr/rinex-app/master/README.md"
+    },
+    {
+        "id" : "ionic2-valenbisi",
+        "title" : "Ionic 2",
+        "subtitle" : "Valenbisi Opendata App",
+        "img_url" : "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Bicisvalenbisi.jpg/800px-Bicisvalenbisi.jpg",
+        "rows" : 1,
+        "markdown_url" : "https://raw.githubusercontent.com/joseahr/ionic-valenbisi-opendata-valencia/master/README.md"
+    },
+    {
+        "id" : "android-topoclot", 
+        "title" : "Android App",
+        "subtitle" : "Curvas circulares y Clotoides",
+        "img_url" : "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Android_robot.svg/872px-Android_robot.svg.png",
+        "rows" : 1,
+        "markdown_url" : "https://raw.githubusercontent.com/joseahr/TopoClot/master/README.md"
+    },
+    {
+        "id" : "joseahr-github-io", 
+        "title" : "Angular 4/ Firebase/ Openlayers 4",
+        "subtitle" : "joseahr.github.io",
+        "img_url" : "https://upload.wikimedia.org/wikipedia/commons/5/54/GitHub_Logo.png",
+        "rows" : 1,
+        "markdown_url" : "https://raw.githubusercontent.com/joseahr/joseahr-gh-pages/master/README.md"
+    }
+]

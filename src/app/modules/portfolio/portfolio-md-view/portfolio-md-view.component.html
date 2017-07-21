@@ -1,0 +1,12 @@
+<markdown #markdown path="{{url}}" style="width : 90%; margin : 0 auto; display : flex; flex-direction : column;"></markdown>
+<button md-mini-fab (click)="goBack()" color="primary" style="position : fixed; top : 0.5em; left : 0.5em; z-index : 1;">
+    <md-icon>arrow_back</md-icon>
+</button>
+
+<button md-mini-fab
+    [@buttonScrollUp]="showButtonUp"
+    (click)="scrollToTop()" 
+    color="primary" 
+    style="position : fixed; bottom : 0.5em; right : 0.5em; z-index : 1;">
+    <md-icon>arrow_upward</md-icon>
+</button>
