@@ -14,6 +14,9 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 
 import { Subject } from 'rxjs';
 
+import { AuthFirebaseDialogComponent } from '..';
+import { SliceObservableListPipe } from '../../pipes';
+
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
@@ -50,6 +53,8 @@ export class MapComponent implements OnInit {
   onDrawEnd : Subject<any> = new Subject();
   onDeleteFeature : Subject<any> = new Subject();
   onFeatureInfoDialogClose : Subject<any> = new Subject();
+  MAX_FEATURES = 5;
+  @ViewChild('featureInput') featureInput : ElementRef;
 
   constructor(
       private auth : AngularFireAuth
@@ -76,7 +81,7 @@ export class MapComponent implements OnInit {
           this.backdropAnimationState = 'logged';
           this.actualUser = user;
           this.enablePointerMove();
-          this.enableSelectFeatures();  
+          this.enableSelectFeatures();
         } else {
           this.backdropAnimationState = 'notLogged';
           this.actualUser = null;
@@ -86,48 +91,51 @@ export class MapComponent implements OnInit {
       });
 
     //this.db.database.ref('/messages').limitToLast(50).on('value', (value)=>console.log('value', value))
+    
+    this.observableFeatureList = this.getFeatureListObservable();
+      //.subscribe( e => console.log(e))
 
-    this.db.list('/users').subscribe(
-      (users)=>{
-        this.usersReference = users;
-        //console.log(users);
-      }
-    );
 
+    /*
     this.observableFeatureList = this.db.list('/messages')
-      .map( (list : any[])=> {
+    .map( (list : any[])=> {
 
-        //let firebaseLSource = this.fireBaseLayer.getSource();
+      //let firebaseLSource = this.fireBaseLayer.getSource();
 
-        return list
-        .reduce( (l : Array<any>, userMessages : any) => {
+      let result : any[] = list
+      .reduce( (l : Array<any>, userMessages : any) => {
 
-          let messages;
-          let userId = userMessages['$key'];
-          //console.log(userId, 'userIdd')
+        let messages;
+        let userId = userMessages['$key'];
+        //console.log(userId, 'userIdd')
 
-          //console.log(Object.keys(userMessages))
+        //console.log(Object.keys(userMessages))
 
-          let userMessagesList = Object.keys(userMessages).map( (messageId) => {
-            let { geohash, message, timestamp } = userMessages[messageId];
-            
-            //let feature = firebaseLSource.getFeatureById(messageId);
+        let userMessagesList = Object.keys(userMessages).map( (messageId) => {
+          let { geohash, message, timestamp } = userMessages[messageId];
+          
+          //let feature = firebaseLSource.getFeatureById(messageId);
 
-            let { lon, lat }= GeoHash.decode(geohash);
+          let { lon, lat } = GeoHash.decode(geohash);
 
-            let coordinate = ol.proj.transform(  [lon, lat]
-                                               , 'EPSG:4326'
-                                               , this.mapInstance.getView().getProjection()  );
-            return ({ userId, coordinate, messageId, message, timestamp });
+          let coordinate = ol.proj.transform(  [lon, lat]
+                                              , 'EPSG:4326'
+                                              , this.mapInstance.getView().getProjection()  );
+          return ({ userId, coordinate, messageId, message, timestamp });
 
-          });
+        });
 
-          return l.concat(userMessagesList);
+        return l.concat(userMessagesList);
 
-        }, []);
-        //console.log(list);
-        //this.fireBaseLayer.getSource().getFeatureById()
-      });
+      }, []);
+
+      console.log(result, 'tree')
+
+      return result.sort( (a, b)=> b.timestamp - a.timestamp).slice(0, 5);
+      //console.log(list);
+      //this.fireBaseLayer.getSource().getFeatureById()
+    });
+    */
   }
 
   ngOnInit() {
@@ -156,10 +164,21 @@ export class MapComponent implements OnInit {
     //this.renderer.setStyle(this.mapContainer.nativeElement, 'background', '#f7f7f7');
     this.user.subscribe()
     this.observableFeatureList.subscribe();
+
+    let inputObservable = Observable.fromEvent(this.featureInput.nativeElement, 'input');
+
+    inputObservable.map( ()=>{
+      this.observableFeatureList = this.getFeatureListObservable();
+    }).subscribe();
+
   }
 
   getInstance(){
     return this.mapInstance;
+  }
+
+  openLoginDialog(){
+    this.dialog.open(AuthFirebaseDialogComponent);
   }
 
   enablePointerMove(){
@@ -226,9 +245,59 @@ export class MapComponent implements OnInit {
     //console.log(message);
 
     let userInfo = this.usersReference.find( u => u.$key == userId );
+    console.log(userInfo, 'UInfo')
 
     //console.log(userInfo)
     return { userInfo, message, timestamp };
+  }
+
+
+  getFeatureListObservable(){
+    return this.db.list('/messages')
+      .flatMap( (userList : any[]) => {
+        //console.log(userList)
+        let messages = userList.reduce( (arr : any[], userMessagesData)=>{
+          let userId = userMessagesData.$key;
+          let messageKeys = Object.keys(userMessagesData);
+          let userMessages = messageKeys.map( key =>{
+            userMessagesData[key].messageId = key;
+            userMessagesData[key].userId = userId;
+            return userMessagesData[key];
+          });
+
+          let userInfoPromise = this.db.database.ref('users').child(userId).once('value').then( snapshot => snapshot.val() );
+          let dataObservable = Observable.of(userMessages);
+          let userInfoObservable = Observable.fromPromise(userInfoPromise);
+          let fullDataObservable = Observable.forkJoin(dataObservable, userInfoObservable);
+          arr.push(fullDataObservable);
+          return arr;
+        }, []);
+        
+
+        return Observable.forkJoin(messages);
+
+
+      })
+      .map( (result : any) =>{
+        console.log(result)
+        return result.reduce( (messages, element : any[])=>{
+          let [userMessages, userInfo]  = element;
+          
+          let { displayName, photoURL } = userInfo;
+          //console.log(displayName, photoURL, 'userId')
+          let usmsgs = userMessages.map( message_ => {
+            let { geohash, message, timestamp, messageId, userId } = message_;
+            let { lon, lat } = GeoHash.decode(geohash);
+            let coordinate = ol.proj.transform(  [lon, lat]
+                                                , 'EPSG:4326'
+                                                , this.mapInstance.getView().getProjection()  );
+
+            return ({ userId, coordinate, messageId, message, timestamp, displayName, photoURL });
+          });
+          return [...messages, ...usmsgs]
+        }, [])
+        .sort( (a, b)=> b.timestamp - a.timestamp)
+      });
   }
 
 }

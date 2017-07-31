@@ -11,6 +11,9 @@ import { AngularFireAuthModule } from 'angularfire2/auth';
 
 import { AsyncWritterDirective } from './directives';
 
+import { SliceObservableListPipe } from './pipes';
+
+
 import { 
     MapComponent
   , ProjectionPickerComponent
@@ -19,6 +22,7 @@ import {
   , MapFirebaseDialogComponent
   , VectorLayerFeatureComponent
   , FeatureInfoDialogComponent
+  , AuthFirebaseDialogComponent
 } from './components';
 
 const COMMON_COMPONENTS = [
@@ -38,8 +42,14 @@ const COMMON_COMPONENTS = [
     AngularFireDatabaseModule,
     AngularFireAuthModule,
   ],
-  declarations: [...COMMON_COMPONENTS, VectorLayerFeatureComponent, MapFirebaseDialogComponent, FeatureInfoDialogComponent],
+  declarations: [ ...COMMON_COMPONENTS
+                , VectorLayerFeatureComponent
+                , MapFirebaseDialogComponent
+                , FeatureInfoDialogComponent
+                , AuthFirebaseDialogComponent
+                , SliceObservableListPipe
+                ],
   exports : COMMON_COMPONENTS,
-  entryComponents : [MapFirebaseDialogComponent, FeatureInfoDialogComponent]
+  entryComponents : [MapFirebaseDialogComponent, FeatureInfoDialogComponent, AuthFirebaseDialogComponent]
 })
 export class MyCommonModule { }

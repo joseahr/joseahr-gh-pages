@@ -1,6 +1,6 @@
 <h4 md-dialog-title>
-  <img src="{{feature.getProperties().userInfo.photoURL}}" style="max-height : 40px; object-fit : cover; border-radius : 20px; line-height : 10px;">
-  {{feature.getProperties().userInfo.displayName}}
+  <img src="{{feature.getProperties().photoURL}}" style="max-height : 40px; object-fit : cover; border-radius : 20px; line-height : 10px;">
+  {{feature.getProperties().displayName}}
 </h4>
 <div md-dialog-content>
   <md-list>
@@ -19,7 +19,7 @@
 </div>
 <div md-dialog-actions align="end">
   <button 
-    *ngIf="userId == feature.getProperties().userInfo.$key" 
+    *ngIf="userId == feature.getProperties().userId" 
     md-icon-button 
     md-dialog-close=""
     (click)="deleteFeature()"

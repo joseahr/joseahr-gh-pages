@@ -1,11 +1,13 @@
 <app-vector-layer-feature
-    *ngFor = "let feature of observableFeatureList | async"
+    *ngFor = "let feature of (observableFeatureList | sliceObservableList:0:MAX_FEATURES) | async"
     [id] = feature.messageId
     [layer] = "firebaseLayer"
     [coordinate]= feature.coordinate
-    [properties] = "getProperties(feature)"
+    [properties] = feature
 >
 </app-vector-layer-feature>
+
+<input type="number" #featureInput [(ngModel)]="MAX_FEATURES" style="position : absolute; top: 50vh; left:300px;z-index:2;">
 
 <app-draw-map-firebase 
     [map]="getInstance()"
@@ -13,21 +15,15 @@
     [onDrawEnd]="onDrawEnd"
 ></app-draw-map-firebase>
 
-<div 
-    style="overflow:hidden;display:flex;flex-direction: column; pointer-events:none; position : absolute; top:0px;bottom:0px;right:0px;left:0px;background:rgba(0,0,0,0.3);z-index:11111; text-align:center;"
+<div
+    (click)="openLoginDialog()"
+    style="cursor : pointer; overflow:hidden;display:flex;flex-direction: column; position : absolute; top:0px;bottom:0px;right:0px;left:0px;background:rgba(0,0,0,0.3);z-index:1; text-align:center;"
     [@notLoggedBackdropAnimation]="backdropAnimationState"
 >
     <div style="margin:auto;">
         <h1 style="color : #3f51b5;margin:auto;">¡Inicia Sesión para utilizar el mapa!</h1>
         <h4 style="color: #fff;margin:auto;">Puedes usar la cuenta de tu proveedor preferido</h4>
-        <md-grid-list cols="3" rowHeight="100px">
-
-            <md-grid-tile
-                [colspan]="1"
-                [rowspan]="1"
-            >
-                <img src="./assets/facebook.svg" alt="" style="height : 100%; object-fit : cover;">
-            </md-grid-tile>
+        <md-grid-list cols="2" rowHeight="100px">
 
             <md-grid-tile
                 [colspan]="1"

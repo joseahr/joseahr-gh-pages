@@ -3,9 +3,9 @@
   *ngIf="user | async; let user; else no_user"
   [mdMenuTriggerFor]="menuLoggedIn"
 >
-  <div 
-    [style.background-image]="'url(' + user.photoURL + ')'"
-    style="width : 40px; height : 40px; background-size : cover !important; border-radius : 40px;"></div>
+  <img 
+   src="{{user.photoURL || ANONYMOUS_USER_PHOTOURL }}"
+    style="width : 40px; height : 40px; object-fit : cover !important; border-radius : 40px;">
 </button>
 
 <ng-template #no_user>
@@ -22,7 +22,7 @@
 </md-menu>
 
 <md-menu #menuLoggedOut="mdMenu" [overlapTrigger]="false">
-  <button md-menu-item (click)="login()">
+  <button md-menu-item (click)="openDialog()">
     <md-icon>person</md-icon>
     <span>Login</span>
   </button>

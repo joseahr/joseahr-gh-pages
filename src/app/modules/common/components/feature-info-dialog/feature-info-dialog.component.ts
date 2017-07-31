@@ -15,7 +15,7 @@ export class FeatureInfoDialogComponent implements OnInit {
   userId;
   feature : ol.Feature;
   @Input('onFeatureDeleted') onFeatureDeleted : Subject<any> = new Subject();
-   @Input('onDialogClose') onDialogClose : Subject<any> = new Subject();
+  @Input('onDialogClose') onDialogClose : Subject<any> = new Subject();
 
 
   constructor(
@@ -33,7 +33,7 @@ export class FeatureInfoDialogComponent implements OnInit {
   deleteFeature(){
     this.db.database
       .ref('messages')
-      .child(this.feature.getProperties().userInfo.$key)
+      .child(this.feature.getProperties().userId)
       .child(this.feature.getId().toString())
       .remove()
       .then( ()=> {
